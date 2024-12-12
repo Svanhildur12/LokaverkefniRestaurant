@@ -1,47 +1,49 @@
 using LokaverkefniRestaurant.Data.Interfaces;
 using LokaverkefniRestaurant.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace LokaverkefniRestaurant.Controllers;
 
-[Route("api/consumables")]
+[Route("api/dish")]
 [Controller]
-
-public class ConsumablesController : ControllerBase
+public class DishController : ControllerBase
 {
     private readonly IRepository _repository;
-    
-    public ConsumablesController(IRepository repository)
+
+    public DishController(IRepository repository)
     {
         _repository = repository;
     }
+
     [HttpGet]
-    public async Task<ActionResult<List<Consumables>>> GetConsumablesAsync()
+    public async Task<ActionResult<List<Dish>>> GetDishAsync()
     {
         try
         {
-            List<Consumables> consumable = await _repository.GetConsumablesAsync();
-            return Ok(consumable);
+            List<Dish> dishes = await _repository.GetDishAsync();
+            return Ok(dishes);
         }
         catch (Exception)
         {
             return StatusCode(500);
         }
     }
+
     [HttpGet]
     [Route("{id}")]
-    public async Task<ActionResult<Consumables>> GetConsumablesById(int id)
+    public async Task<ActionResult<Dish>> GetDishById(int id)
     {
         try
         {
-            Consumables consumable = await _repository.GetConsumablesByIdAsync(id);
-            if (consumable == null)
+            Dish dish = await _repository.GetDishByIdAsync(id);
+            if (dish == null)
             {
                 return NotFound();
             }
             else
             {
-                return Ok(consumable);
+                return Ok(dish);
             }
         }
         catch (Exception)
@@ -49,40 +51,20 @@ public class ConsumablesController : ControllerBase
             return StatusCode(500);
         }
     }
+
     [HttpPost]
-    public async Task<ActionResult> CreateConsumablesAsync([FromBody]Consumables consumables)
+    public async Task<ActionResult<Dish>> CreateDish([FromBody] Dish dish)
     {
         try
         {
             if (ModelState.IsValid)
             {
-                await _repository.CreateConsumablesAsync(consumables);
-                return CreatedAtAction(nameof(GetConsumablesById), new { id = consumables.Id }, consumables);
+                await _repository.CreateDishAsync(dish);
+                return CreatedAtAction(nameof(GetDishById), new { id = dish.Id }, dish);
             }
             else
             {
-                return BadRequest();
-            }
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500);
-        }
-    }
-    [HttpPut]
-    [Route("{id}")]
-    public async Task<ActionResult<Consumables>> UpdateConsumablesAsync(int id, [FromBody]Consumables consumables)
-    {
-        try
-        {
-            Consumables consumable = await _repository.UpdateConsumablesAsync(id, consumables);
-            if (consumable == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return CreatedAtAction(nameof(GetConsumablesById), new { id = consumable.Id }, consumables);
+                return BadRequest(ModelState);
             }
         }
         catch (Exception)
@@ -90,13 +72,36 @@ public class ConsumablesController : ControllerBase
             return StatusCode(500);
         }
     }
-    [HttpDelete]
+
+    [HttpPut]
     [Route("{id}")]
-    public async Task<ActionResult<Consumables>> DeleteConsumablesAsync(int id)
+    public async Task<ActionResult<Dish>> UpdateDishAsync(int id, [FromBody] Dish dish)
     {
         try
         {
-            bool deleteSuccess = await _repository.DeleteConsumablesAsync(id);
+            Dish dishes = await _repository.UpdateDishAsync(id, dish);
+            if (dishes == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return CreatedAtAction(nameof(GetDishById), new { id = dish.Id }, dish);
+            }
+        }
+        catch (Exception)
+        {
+            return StatusCode(500);
+        }
+    }
+
+    [HttpDelete]
+    [Route("{id}")]
+    public async Task<ActionResult<Dish>> DeleteDishAsync(int id)
+    {
+        try
+        {
+            bool deleteSuccess = await _repository.DeleteDishAsync(id);
             if (!deleteSuccess)
             {
                 return NotFound();
@@ -110,6 +115,7 @@ public class ConsumablesController : ControllerBase
         {
             return StatusCode(500);
         }
-        
+
     }
 }
+

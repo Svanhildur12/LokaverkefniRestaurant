@@ -1,5 +1,7 @@
+using System.Text.Json;
 using LokaverkefniRestaurant.Data.Interfaces;
 using LokaverkefniRestaurant.Data.Repository;
+using LokaverkefniRestaurant.Models;
 
 namespace LokaverkefniRestaurant;
 
@@ -7,23 +9,38 @@ public static class Program
 {
     public static void Main(string[] args)
     {
+        var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddControllers();
         builder.Services.AddScoped<IRepository, RestaurantRepository>();
         builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
             options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+        builder.Services.AddControllers().AddJsonOptions(options =>
+            options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
+        
+        
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(name: MyAllowSpecificOrigins,
+                policy => { policy.WithOrigins("http://localhost:3000")
+                    .AllowAnyHeader()
+                    .AllowAnyMethod(); 
+                });
 
-        var app = builder.Build();
+        });
+            var app = builder.Build();
 
+            app.UseCors(MyAllowSpecificOrigins);
 
-        // app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
-        app.UseAuthorization();
+            app.UseAuthorization();
+        
+            app.MapControllers();
 
-
-        app.MapControllers();
-
-        app.Run();
+            app.Run();
+        
     }
 }

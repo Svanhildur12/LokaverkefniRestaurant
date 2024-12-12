@@ -50,8 +50,10 @@ public class RestaurantRepository : IRepository
             {
                 return null;
             }
-            orderToUpdate.Guest = order.Guest;
-            orderToUpdate.TotalPrice = order.TotalPrice;
+            orderToUpdate.Guests = order.Guests;
+            orderToUpdate.Email = order.Email;
+            orderToUpdate.Date = order.Date;
+            orderToUpdate.Time = order.Time;
             
             await db.SaveChangesAsync();
             return orderToUpdate;
@@ -79,75 +81,148 @@ public class RestaurantRepository : IRepository
         }
     }
 
-    public Task<List<Consumables>> GetConsumablesAsync()
+    public Task<List<Dish>> GetDishAsync()
     {
         using (var db = _dbContext)
         {
-            return db.Consumables.ToListAsync();
+            return db.Dishes.ToListAsync();
         }
     }
 
-    public async Task<Consumables> GetConsumablesByIdAsync(int id)
+    public async Task<Dish> GetDishByIdAsync(int id)
     {
-        Consumables consumable;
+        Dish dish;
         using (var db = _dbContext)
         {
-            consumable = await db.Consumables.FirstOrDefaultAsync(x => x.Id == id);
+            dish = await db.Dishes.FirstOrDefaultAsync(x => x.Id == id);
         }
-
-        return consumable;
+        return dish;
     }
 
-    public async Task<Consumables> CreateConsumablesAsync(Consumables consumables)
+    public async Task<Dish> CreateDishAsync(Dish dish)
     {
         using (var db = _dbContext)
         {
-            await db.Consumables.AddAsync(consumables);
+            await db.AddAsync(dish);
             await db.SaveChangesAsync();
-            return consumables;
         }
+        return dish;
     }
 
-    public async Task<Consumables> UpdateConsumablesAsync(int id, Consumables consumables)
+    public async Task<Dish> UpdateDishAsync(int id,[FromBody] Dish dish)
     {
-        Consumables consumablesToUpdate;
-
+        Dish dishToUpdate;
         using (var db = _dbContext)
         {
-            consumablesToUpdate = await db.Consumables.FirstOrDefaultAsync(x => x.Id == id);
+            dishToUpdate = await db.Dishes.FirstOrDefaultAsync(x => x.Id == id);
 
-            if (consumablesToUpdate == null)
+            if (dishToUpdate == null)
             {
                 return null;
             }
-            consumablesToUpdate.Dishes = consumables.Dishes;
-            consumablesToUpdate.Drinks = consumables.Drinks;
+            
+            dishToUpdate.Id = dishToUpdate.Id;
+            dishToUpdate.Price = dishToUpdate.Price;
+            dishToUpdate.Quantity = dishToUpdate.Quantity;
+            dishToUpdate.Name = dishToUpdate.Name;
             
             await db.SaveChangesAsync();
-            return consumablesToUpdate;
+            return dishToUpdate;
         }
     }
 
-    public async Task <bool> DeleteConsumablesAsync(int id)
+    public async Task<bool> DeleteDishAsync(int id)
     {
-        Consumables consumablesToDelete;
+        Dish dishToDelete;
+
         using (var db = _dbContext)
         {
-           consumablesToDelete = await db.Consumables.FirstOrDefaultAsync(x => x.Id == id);
-           if (consumablesToDelete == null)
-           {
-               return false;
-           }
-           else
-           {
-               db.Consumables.Remove(consumablesToDelete);
-               await db.SaveChangesAsync();
-               return true;
-           }
+            dishToDelete = await db.Dishes.FirstOrDefaultAsync(x => x.Id  == id);
+
+            if (dishToDelete == null)
+            {
+                return false;
+            }
+            else
+            {
+                db.Dishes.Remove(dishToDelete);
+                await db.SaveChangesAsync();
+                return true;
+            }
         }
-        
     }
-    
+
+    public Task<List<Drink>> GetDrinkAsync()
+    {
+        using (var db = _dbContext)
+        {
+            return db.Drinks.ToListAsync();
+        }
+    }
+
+    public async Task<Drink> CreateDrinkAsync(Drink drink)
+    {
+        using (var db = _dbContext)
+        {
+            await db.Drinks.AddAsync(drink);
+            await db.SaveChangesAsync();
+        }
+        return drink;
+    }
+
+    public async Task<Drink> UpdateDrinkAsync(int id, Drink drink)
+    {
+        Drink drinkToUpdate;
+
+        using (var db = _dbContext)
+        {
+            drinkToUpdate = await db.Drinks.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (drinkToUpdate == null)
+            {
+                return null;
+            }
+            drinkToUpdate.Id = drinkToUpdate.Id;
+            drinkToUpdate.Price = drinkToUpdate.Price;
+            drinkToUpdate.Quantity = drinkToUpdate.Quantity;
+            drinkToUpdate.Name = drinkToUpdate.Name;
+            
+            await db.SaveChangesAsync();
+            return drinkToUpdate;
+        }
+    }
+
+    public async Task<bool> DeleteDrinkAsync(int id)
+    {
+        Drink drinkToDelete;
+
+        using (var db = _dbContext)
+        {
+            drinkToDelete = await db.Drinks.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (drinkToDelete == null)
+            {
+                return false;
+            }
+            else
+            {
+                db.Drinks.Remove(drinkToDelete);
+                await db.SaveChangesAsync();
+            }
+            return true;
+        }
+    }
+
+    public async Task<Drink> GetDrinkByIdAsync(int id)
+    {
+        Drink drinks;
+        using (var db = _dbContext)
+        {
+            drinks = await db.Drinks.FirstOrDefaultAsync(x => x.Id == id);
+        }
+        return drinks;
+    }
+
     public Task<List<Customer>> GetCustomerAsync()
     {
         using (var db = _dbContext)
@@ -213,5 +288,53 @@ public class RestaurantRepository : IRepository
             }
         }
         
+    }
+
+    public async Task<List<Cart>> GetCartAsync()
+    {
+        using (var db = _dbContext)
+        {
+            return await db.Carts.ToListAsync();
+        }
+    }
+
+    public async Task<Cart> UpdateCartAsync(int id, Cart cart)
+    {
+        Cart cartToUpdate;
+
+        using (var db = _dbContext)
+        {
+            cartToUpdate = await db.Carts.FirstOrDefaultAsync(x => x.CartId == id);
+            if (cartToUpdate == null)
+            {
+                return null;
+            }
+            cartToUpdate.Dish = cart.Dish;
+            cartToUpdate.Drink = cart.Drink;
+            cartToUpdate.CustomerId = cart.CustomerId;
+            cartToUpdate.TotalPrice = cart.TotalPrice;
+            
+            await db.SaveChangesAsync();
+            return cartToUpdate;
+        }
+    }
+
+    public async Task<bool> DeleteCartAsync(int id)
+    {
+        Cart cartToDelete;
+        using (var db = _dbContext)
+        {
+            cartToDelete =  await db.Carts.FirstOrDefaultAsync(x => x.CartId == id);
+            if (cartToDelete == null)
+            {
+                return false;
+            }
+            else
+            {
+                db.Carts.Remove(cartToDelete);
+                await db.SaveChangesAsync();
+            }
+            return true;
+        }
     }
 }

@@ -7,9 +7,13 @@ public class RestaurantContext : DbContext
 {
     public DbSet<Order> Orders { get; set; }
     public DbSet<Customer> Customers { get; set; }
-    public DbSet<Consumables> Consumables { get; set; }
+    public DbSet<Dish> Dishes { get; set; }
+    public DbSet<Drink> Drinks { get; set; }
+    public DbSet<Cart> Carts { get; set; }
     
-
+    
+    
+    
     public string DbPath { get; }
 
     public RestaurantContext()
@@ -22,6 +26,6 @@ public class RestaurantContext : DbContext
     
     protected override void OnConfiguring(DbContextOptionsBuilder options)
         => options.UseSqlite($"Data Source={DbPath}");
-    
-    
+
+   
 }

@@ -1,5 +1,7 @@
+using System.ComponentModel.DataAnnotations;
 using LokaverkefniRestaurant.Data.Interfaces;
 using LokaverkefniRestaurant.Models;
+using LokaverkefniRestaurant.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LokaverkefniRestaurant.Controllers;
@@ -10,8 +12,6 @@ namespace LokaverkefniRestaurant.Controllers;
 public class OrderController : ControllerBase
 {
     private readonly IRepository _repository;
-    
-    
     
     public OrderController(IRepository repository)
     {
@@ -55,7 +55,7 @@ public class OrderController : ControllerBase
     }
     
     [HttpPost]
-    public async Task<ActionResult> CreateOrder([FromBody] Order order)
+    public async Task<ActionResult<Order>> CreateOrder([FromBody] Order order)
     {
         try
         {
