@@ -2,9 +2,10 @@ namespace LokaverkefniRestaurant.Models.DTOs;
 
 public class OrderDTO
 {
-    public int Id { get; set; }
-    public DateOnly OrderDate { get; set; }
-    public TimeOnly OrderTime { get; set; }
-    public int Guest  { get; set; }
+    public string Email { get; set; }
+    public int Guests  { get; set; }
+    public string Date { get; set; }
+    public string Time { get; set; }
+    
 }
 

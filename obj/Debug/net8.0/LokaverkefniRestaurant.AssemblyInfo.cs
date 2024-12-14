@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LokaverkefniRestaurant")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+db308199a88dacc757d197ce880ffac67bd26ae5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dcac138ea29fad81181302b3eb209e5cdc8cee61")]
 [assembly: System.Reflection.AssemblyProductAttribute("LokaverkefniRestaurant")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LokaverkefniRestaurant")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

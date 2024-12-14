@@ -1,5 +1,6 @@
 using LokaverkefniRestaurant.Data.Interfaces;
 using LokaverkefniRestaurant.Models;
+using LokaverkefniRestaurant.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,13 +30,15 @@ public class RestaurantRepository : IRepository
         return order;
     }
 
-    public async Task CreateOrderAsync(Order order)
+    public async Task<Order> CreateOrderAsync(Order order)
     {
         using (var db = _dbContext)
         {
             await db.Orders.AddAsync(order);
             await db.SaveChangesAsync();
         }
+
+        return order;
     }
 
     public async Task<Order> UpdateOrdersAsync(int id, Order order)
@@ -54,6 +57,8 @@ public class RestaurantRepository : IRepository
             orderToUpdate.Email = order.Email;
             orderToUpdate.Date = order.Date;
             orderToUpdate.Time = order.Time;
+           
+           
             
             await db.SaveChangesAsync();
             return orderToUpdate;
@@ -121,10 +126,10 @@ public class RestaurantRepository : IRepository
                 return null;
             }
             
-            dishToUpdate.Id = dishToUpdate.Id;
-            dishToUpdate.Price = dishToUpdate.Price;
-            dishToUpdate.Quantity = dishToUpdate.Quantity;
-            dishToUpdate.Name = dishToUpdate.Name;
+            dishToUpdate.Price = dish.Price;
+            dishToUpdate.Quantity = dish.Quantity;
+            dishToUpdate.strMeal = dish.strMeal;
+            
             
             await db.SaveChangesAsync();
             return dishToUpdate;
@@ -176,16 +181,15 @@ public class RestaurantRepository : IRepository
 
         using (var db = _dbContext)
         {
-            drinkToUpdate = await db.Drinks.FirstOrDefaultAsync(x => x.Id == id);
+            drinkToUpdate = await db.Drinks.FirstOrDefaultAsync(x => x.strDrink == drink.strDrink);
 
             if (drinkToUpdate == null)
             {
                 return null;
             }
-            drinkToUpdate.Id = drinkToUpdate.Id;
-            drinkToUpdate.Price = drinkToUpdate.Price;
-            drinkToUpdate.Quantity = drinkToUpdate.Quantity;
-            drinkToUpdate.Name = drinkToUpdate.Name;
+            drinkToUpdate.Price = drink.Price;
+            drinkToUpdate.Quantity = drink.Quantity;
+            drinkToUpdate.strDrink = drink.strDrink;
             
             await db.SaveChangesAsync();
             return drinkToUpdate;
@@ -263,7 +267,7 @@ public class RestaurantRepository : IRepository
             {
                 return null;
             }
-            customerToUpdate.Email = customer.Email;
+            customerToUpdate.CustomerEmail = customer.CustomerEmail;
             
             await db.SaveChangesAsync();
             return customerToUpdate;
@@ -288,53 +292,5 @@ public class RestaurantRepository : IRepository
             }
         }
         
-    }
-
-    public async Task<List<Cart>> GetCartAsync()
-    {
-        using (var db = _dbContext)
-        {
-            return await db.Carts.ToListAsync();
-        }
-    }
-
-    public async Task<Cart> UpdateCartAsync(int id, Cart cart)
-    {
-        Cart cartToUpdate;
-
-        using (var db = _dbContext)
-        {
-            cartToUpdate = await db.Carts.FirstOrDefaultAsync(x => x.CartId == id);
-            if (cartToUpdate == null)
-            {
-                return null;
-            }
-            cartToUpdate.Dish = cart.Dish;
-            cartToUpdate.Drink = cart.Drink;
-            cartToUpdate.CustomerId = cart.CustomerId;
-            cartToUpdate.TotalPrice = cart.TotalPrice;
-            
-            await db.SaveChangesAsync();
-            return cartToUpdate;
-        }
-    }
-
-    public async Task<bool> DeleteCartAsync(int id)
-    {
-        Cart cartToDelete;
-        using (var db = _dbContext)
-        {
-            cartToDelete =  await db.Carts.FirstOrDefaultAsync(x => x.CartId == id);
-            if (cartToDelete == null)
-            {
-                return false;
-            }
-            else
-            {
-                db.Carts.Remove(cartToDelete);
-                await db.SaveChangesAsync();
-            }
-            return true;
-        }
     }
 }

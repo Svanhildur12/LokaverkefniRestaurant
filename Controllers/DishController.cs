@@ -1,5 +1,6 @@
 using LokaverkefniRestaurant.Data.Interfaces;
 using LokaverkefniRestaurant.Models;
+using LokaverkefniRestaurant.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -79,14 +80,14 @@ public class DishController : ControllerBase
     {
         try
         {
-            Dish dishes = await _repository.UpdateDishAsync(id, dish);
-            if (dishes == null)
+            Dish updatedDish = await _repository.UpdateDishAsync(id, dish);
+            if (updatedDish == null)
             {
                 return NotFound();
             }
             else
             {
-                return CreatedAtAction(nameof(GetDishById), new { id = dish.Id }, dish);
+                return CreatedAtAction(nameof(GetDishById), new { id = updatedDish.Id }, updatedDish);
             }
         }
         catch (Exception)

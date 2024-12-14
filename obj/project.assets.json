@@ -3876,7 +3876,6 @@
       "packagesPath": "/Users/svanhildur/.nuget/packages/",
       "outputPath": "/Users/svanhildur/RiderProjects/WebApplication3/LokaverkefniRestaurant/obj/",
       "projectStyle": "PackageReference",
-      "UsingMicrosoftNETSdk": false,
       "configFilePaths": [
         "/Users/svanhildur/.nuget/NuGet/NuGet.Config"
       ],

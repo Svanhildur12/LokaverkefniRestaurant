@@ -1,5 +1,6 @@
 using LokaverkefniRestaurant.Data.Interfaces;
 using LokaverkefniRestaurant.Models;
+using LokaverkefniRestaurant.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -61,7 +62,7 @@ public class DrinkController : ControllerBase
             if (ModelState.IsValid)
             {
                 await _repository.CreateDrinkAsync(drink);
-                return CreatedAtAction(nameof(GetDrinkById), new { id = drink.Id }, drink);
+                return CreatedAtAction(nameof(GetDrinkById), new { id = drink.idDrink }, drink);
             }
             else
             {
@@ -75,18 +76,18 @@ public class DrinkController : ControllerBase
     }
     [HttpPut]
             [Route("{id}")]
-            public async Task<ActionResult<Drink>> UpdateDrinkAsync(int id, [FromBody] Drink drink)
+            public async Task<ActionResult<Drink>> UpdateDrinkAsync(int id,[FromBody] Drink drink)
             {
                 try
                 {
-                    Drink drinks = await _repository.UpdateDrinkAsync(id, drink);
-                    if (drinks == null)
+                    Drink updatedDrinks = await _repository.UpdateDrinkAsync(id,drink);
+                    if (updatedDrinks == null)
                     {
                         return NotFound();
                     }
                     else
                     {
-                        return CreatedAtAction(nameof(GetDrinkById), new { id = drink.Id }, drink);
+                        return CreatedAtAction(nameof(GetDrinkById), new { id = updatedDrinks.Id }, updatedDrinks);
                     }
                 }
                 catch (Exception)

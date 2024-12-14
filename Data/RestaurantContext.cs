@@ -9,9 +9,6 @@ public class RestaurantContext : DbContext
     public DbSet<Customer> Customers { get; set; }
     public DbSet<Dish> Dishes { get; set; }
     public DbSet<Drink> Drinks { get; set; }
-    public DbSet<Cart> Carts { get; set; }
-    
-    
     
     
     public string DbPath { get; }
