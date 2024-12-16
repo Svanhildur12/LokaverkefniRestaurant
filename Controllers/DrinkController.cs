@@ -87,7 +87,7 @@ public class DrinkController : ControllerBase
                     }
                     else
                     {
-                        return CreatedAtAction(nameof(GetDrinkById), new { id = updatedDrinks.Id }, updatedDrinks);
+                        return CreatedAtAction(nameof(GetDrinkById), new { id = updatedDrinks.id }, updatedDrinks);
                     }
                 }
                 catch (Exception)

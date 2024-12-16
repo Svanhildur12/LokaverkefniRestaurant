@@ -61,7 +61,7 @@ public class DishController : ControllerBase
             if (ModelState.IsValid)
             {
                 await _repository.CreateDishAsync(dish);
-                return CreatedAtAction(nameof(GetDishById), new { id = dish.Id }, dish);
+                return CreatedAtAction(nameof(GetDishById), new { id = dish.id }, dish);
             }
             else
             {
@@ -87,7 +87,7 @@ public class DishController : ControllerBase
             }
             else
             {
-                return CreatedAtAction(nameof(GetDishById), new { id = updatedDish.Id }, updatedDish);
+                return CreatedAtAction(nameof(GetDishById), new { id = updatedDish.id }, updatedDish);
             }
         }
         catch (Exception)

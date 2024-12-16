@@ -14,7 +14,7 @@ public class Order
     [JsonPropertyName("time")]
     public string Time { get; set; }
     [JsonPropertyName("dishes")]   
-    public List<Dish> Dishes { get; set; }
+    public List<Dish> Dishes { get; set; } = new List<Dish>();
     [JsonPropertyName("drinks")]
-    public List<Drink> Drinks { get; set; }
+    public List<Drink> Drinks { get; set; } = new List<Drink>();
 }

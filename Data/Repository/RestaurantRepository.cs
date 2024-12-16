@@ -15,7 +15,7 @@ public class RestaurantRepository : IRepository
     {
         using (var db = _dbContext)
         {
-            return db.Orders.ToListAsync();
+            return db.Orders.Include(o => o.Drinks).Include(o => o.Dishes).ToListAsync();
         }
     }
 
@@ -99,7 +99,7 @@ public class RestaurantRepository : IRepository
         Dish dish;
         using (var db = _dbContext)
         {
-            dish = await db.Dishes.FirstOrDefaultAsync(x => x.Id == id);
+            dish = await db.Dishes.FirstOrDefaultAsync(x => x.id == id);
         }
         return dish;
     }
@@ -119,16 +119,19 @@ public class RestaurantRepository : IRepository
         Dish dishToUpdate;
         using (var db = _dbContext)
         {
-            dishToUpdate = await db.Dishes.FirstOrDefaultAsync(x => x.Id == id);
+            dishToUpdate = await db.Dishes.FirstOrDefaultAsync(x => x.id == id);
 
             if (dishToUpdate == null)
             {
                 return null;
             }
-            
-            dishToUpdate.Price = dish.Price;
-            dishToUpdate.Quantity = dish.Quantity;
+            dishToUpdate.strMealThumb = dish.strMealThumb;
+            dishToUpdate.strInstructions = dish.strInstructions;
+            dishToUpdate.strCategory = dish.strCategory;
+            dishToUpdate.price = dish.price;
+            dishToUpdate.quantity = dish.quantity;
             dishToUpdate.strMeal = dish.strMeal;
+            dishToUpdate.idMeal = dish.idMeal;
             
             
             await db.SaveChangesAsync();
@@ -142,7 +145,7 @@ public class RestaurantRepository : IRepository
 
         using (var db = _dbContext)
         {
-            dishToDelete = await db.Dishes.FirstOrDefaultAsync(x => x.Id  == id);
+            dishToDelete = await db.Dishes.FirstOrDefaultAsync(x => x.id  == id);
 
             if (dishToDelete == null)
             {
@@ -187,9 +190,13 @@ public class RestaurantRepository : IRepository
             {
                 return null;
             }
-            drinkToUpdate.Price = drink.Price;
-            drinkToUpdate.Quantity = drink.Quantity;
+            drinkToUpdate.price = drink.price;
+            drinkToUpdate.quantity = drink.quantity;
             drinkToUpdate.strDrink = drink.strDrink;
+            drinkToUpdate.strCategory = drink.strCategory;
+            drinkToUpdate.idDrink = drink.idDrink;
+            drinkToUpdate.strInstructions = drink.strInstructions;
+            drinkToUpdate.strDrinkThumb = drink.strDrinkThumb;
             
             await db.SaveChangesAsync();
             return drinkToUpdate;
@@ -202,7 +209,7 @@ public class RestaurantRepository : IRepository
 
         using (var db = _dbContext)
         {
-            drinkToDelete = await db.Drinks.FirstOrDefaultAsync(x => x.Id == id);
+            drinkToDelete = await db.Drinks.FirstOrDefaultAsync(x => x.id == id);
 
             if (drinkToDelete == null)
             {
@@ -222,7 +229,7 @@ public class RestaurantRepository : IRepository
         Drink drinks;
         using (var db = _dbContext)
         {
-            drinks = await db.Drinks.FirstOrDefaultAsync(x => x.Id == id);
+            drinks = await db.Drinks.FirstOrDefaultAsync(x => x.id == id);
         }
         return drinks;
     }
