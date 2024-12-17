@@ -108,7 +108,7 @@ public class OrderController : ControllerBase
             }
             else
             {
-                return NoContent();
+                return Ok(new {Message = "Order deleted"});
             }
         }
         catch (Exception)

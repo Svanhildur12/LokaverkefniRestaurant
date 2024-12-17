@@ -13,6 +13,7 @@ public class Order
     public DateTime Date { get; set; }
     [JsonPropertyName("time")]
     public string Time { get; set; }
+    
     [JsonPropertyName("dishes")]   
     public List<Dish> Dishes { get; set; } = new List<Dish>();
     [JsonPropertyName("drinks")]

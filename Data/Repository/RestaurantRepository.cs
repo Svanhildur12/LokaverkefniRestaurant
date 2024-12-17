@@ -24,7 +24,7 @@ public class RestaurantRepository : IRepository
         Order order;
         using (var db = _dbContext)
         {
-            order = await db.Orders.FirstOrDefaultAsync(x => x.Id == id)!;
+            order = await db.Orders.Include(o => o.Dishes).Include(o => o.Drinks).FirstOrDefaultAsync(x => x.Id == id)!;
         }
 
         return order;
@@ -47,7 +47,7 @@ public class RestaurantRepository : IRepository
 
         using (var db = _dbContext)
         {
-            orderToUpdate = await db.Orders.FirstOrDefaultAsync(x => x.Id == id);
+            orderToUpdate = await db.Orders.Include(o => o.Dishes).Include(o => o.Drinks).FirstOrDefaultAsync(x => x.Id == id);
 
             if (orderToUpdate == null)
             {
@@ -57,8 +57,8 @@ public class RestaurantRepository : IRepository
             orderToUpdate.Email = order.Email;
             orderToUpdate.Date = order.Date;
             orderToUpdate.Time = order.Time;
-           
-           
+            orderToUpdate.Dishes = order.Dishes;
+            orderToUpdate.Drinks = order.Drinks;
             
             await db.SaveChangesAsync();
             return orderToUpdate;
@@ -71,7 +71,7 @@ public class RestaurantRepository : IRepository
 
         using (var db = _dbContext)
         {
-            orderToDelete = await db.Orders.FirstOrDefaultAsync(x => x.Id == id);
+            orderToDelete = await db.Orders.Include(o => o.Dishes).Include(o => o.Drinks).FirstOrDefaultAsync(x => x.Id == id);
 
             if (orderToDelete == null)
             {
