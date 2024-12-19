@@ -30,14 +30,26 @@ public class RestaurantRepository : IRepository
         return order;
     }
 
+    public async Task<Order> GetOrdersByEmailAsync(string email)
+    {
+        return await _dbContext.Orders.
+            Include(o => o.Drinks)
+            .Include(o => o.Dishes)
+            .FirstOrDefaultAsync(x => x.Email == email);
+    }
+
     public async Task<Order> CreateOrderAsync(Order order)
     {
-        using (var db = _dbContext)
+        var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.Id == order.CustomerId);
+        if (customer == null)
         {
-            await db.Orders.AddAsync(order);
-            await db.SaveChangesAsync();
+            throw new ArgumentException("Customer with the specified ID does not exist.");
         }
-
+        
+        order.Customer = customer;
+        
+        await _dbContext.Orders.AddAsync(order);
+        await _dbContext.SaveChangesAsync();
         return order;
     }
 
@@ -244,21 +256,13 @@ public class RestaurantRepository : IRepository
 
     public async Task <Customer> GetCustomerByIdAsync(int id)
     {
-        Customer customer;
-        using (var db = _dbContext)
-        {
-            customer = await db.Customers.FirstOrDefaultAsync(x => x.Id == id);
-        }
-        return customer;
+        return await _dbContext.Customers.Include(c => c.Orders).FirstOrDefaultAsync(c => c.Id == id);
     }
 
     public async Task <Customer> CreateCustomerAsync(Customer customer)
     {
-        using (var db = _dbContext)
-        {
-            await db.Customers.AddAsync(customer);
-            await db.SaveChangesAsync();
-        }
+        await _dbContext.Customers.AddAsync(customer);
+        await _dbContext.SaveChangesAsync();
         return customer;
     }
 
@@ -274,7 +278,7 @@ public class RestaurantRepository : IRepository
             {
                 return null;
             }
-            customerToUpdate.CustomerEmail = customer.CustomerEmail;
+            customerToUpdate.Email = customer.Email;
             
             await db.SaveChangesAsync();
             return customerToUpdate;
@@ -283,21 +287,19 @@ public class RestaurantRepository : IRepository
 
     public async Task <bool> DeleteCustomerAsync(int id)
     {
-        Customer customerToDelete;
-        using (var db = _dbContext)
+        var customerToDelete = await _dbContext.Customers.FirstOrDefaultAsync(x => x.Id == id);
+        if (customerToDelete == null)
         {
-            customerToDelete = await db.Customers.FirstOrDefaultAsync(x => x.Id == id);
-            if (customerToDelete == null)
-            {
-                return false;
-            }
-            else
-            {
-                db.Customers.Remove(customerToDelete);
-                await db.SaveChangesAsync();
-                return true;
-            }
+            return false;
         }
+        _dbContext.Customers.Remove(customerToDelete);
+        await _dbContext.SaveChangesAsync();
+        return true;
         
+    }
+
+    public async Task<Customer> GetCustomerByEmailAsync(string email)
+    {
+            return await _dbContext.Customers.FirstOrDefaultAsync(c => c.Email == email);
     }
 }

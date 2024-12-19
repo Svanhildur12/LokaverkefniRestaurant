@@ -8,7 +8,7 @@ namespace LokaverkefniRestaurant.Controllers;
 
 
 [Route("api/orders")]
-[Controller]
+[ApiController]
 public class OrderController : ControllerBase
 {
     private readonly IRepository _repository;
@@ -53,27 +53,52 @@ public class OrderController : ControllerBase
             return StatusCode(500);
         }
     }
+    [HttpGet]
+    [Route("byEmail/{email}")]
+    public async Task<ActionResult<Order>> GetOrderByEmail(string email)
+    {
+        try
+        {
+            Order order = await _repository.GetOrdersByEmailAsync(email);
+            if (order == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(order);
+            }
+        }
+        catch (Exception)
+        {
+            return StatusCode(500);
+        }
+    }
     
     [HttpPost]
     public async Task<ActionResult<Order>> CreateOrder([FromBody] Order order)
     {
         try
         {
-            if (ModelState.IsValid)
+            Console.WriteLine($"Received Order: CustomerId={order.CustomerId}, Email={order.Email}");
+
+            if (!ModelState.IsValid)
             {
-                await _repository.CreateOrderAsync(order);
-                return CreatedAtAction(nameof(GetOrdersById), new { id = order.Id }, order);
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage);
+                return BadRequest(new { errors });
             }
-            else
-            {
-                return BadRequest();
-            }
+
+            var createdOrder = await _repository.CreateOrderAsync(order);
+            return CreatedAtAction(nameof(GetOrdersById), new { id = createdOrder.Id }, createdOrder);
         }
         catch (Exception ex)
         {
-            return StatusCode(500);
+            return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
+
+
     [HttpPut]
     [Route("{id}")]
     public async Task<ActionResult<Order>> UpdateOrdersAsync(int id,[FromBody] Order order)

@@ -24,5 +24,13 @@ public class RestaurantContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder options)
         => options.UseSqlite($"Data Source={DbPath}");
 
+
+   /* protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Order>()
+            .HasOne<Customer>(c => c.Customer)
+            .WithMany(o => o.Orders)
+            .HasForeignKey(c => c.CustomerId);
+    }*/
    
 }

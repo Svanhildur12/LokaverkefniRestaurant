@@ -7,6 +7,7 @@ public interface IRepository
 {
     Task<List<Order>> GetOrdersAsync();
     Task<Order> GetOrdersByIdAsync(int id);
+    Task<Order> GetOrdersByEmailAsync(string email);
     Task<Order> CreateOrderAsync(Order order);
     Task<Order> UpdateOrdersAsync(int id, Order order);
     Task<bool> DeleteOrdersAsync(int id);
@@ -25,4 +26,5 @@ public interface IRepository
     Task<Customer> CreateCustomerAsync(Customer customer);
     Task<Customer> UpdateCustomerAsync(int id, Customer customer);
     Task<bool> DeleteCustomerAsync(int id);
+    Task<Customer> GetCustomerByEmailAsync(string email);
 }

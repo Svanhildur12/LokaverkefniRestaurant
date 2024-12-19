@@ -50,41 +50,20 @@ public class CustomerController : ControllerBase
                 return StatusCode(500);
             }
         }
-
-        [HttpPost]
-        public async Task<ActionResult> CreateCustomer([FromBody] Customer customer)
+        [HttpGet]
+        [Route("{email}")]
+        public async Task<ActionResult<Customer>> GetCustomerByEmail(string email)
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    await _repository.CreateCustomerAsync(customer);
-                    return CreatedAtAction(nameof(GetCustomerById), new { id = customer.Id }, customer);
-                }
-                else
-                {
-                    return BadRequest();
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500);
-            }
-        }
-        [HttpPut]
-        [Route("{id}")]
-        public async Task<ActionResult<Customer>> UpdateCustomerAsync(int id,[FromBody] Customer customer)
-        {
-            try
-            {
-                Customer customers = await _repository.UpdateCustomerAsync(id, customer);
+                Customer customers = await _repository.GetCustomerByEmailAsync(email);
                 if (customers == null)
                 {
                     return NotFound();
                 }
                 else
                 {
-                    return CreatedAtAction(nameof(GetCustomerById), new { id = customer.Id }, customer);
+                    return Ok(customers);
                 }
             }
             catch (Exception)
@@ -92,6 +71,54 @@ public class CustomerController : ControllerBase
                 return StatusCode(500);
             }
         }
+        [HttpPost]
+        public async Task<ActionResult<Customer>> CreateCustomer([FromBody] Customer customer)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(customer.Email))
+                {
+                    return BadRequest("Email is required.");
+                }
+                
+                var existingCustomer = await _repository.GetCustomerByEmailAsync(customer.Email);
+                if (existingCustomer != null)
+                {
+                    return Conflict("Customer with this email already exists.");
+                }
+                
+                var newCustomer = await _repository.CreateCustomerAsync(customer);
+
+                return CreatedAtAction(nameof(GetCustomerById), new { id = newCustomer.Id }, newCustomer);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<ActionResult<Customer>> UpdateCustomer(int id, [FromBody] Customer customer)
+        {
+            try
+            {
+                Customer updatedCustomer = await _repository.UpdateCustomerAsync(id, customer);
+                if (updatedCustomer == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return CreatedAtAction(nameof(GetCustomerById), new { id = updatedCustomer.Id }, updatedCustomer);
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(500);
+            }
+        }
+
         [HttpDelete]
         [Route("{id}")]
         public async Task<ActionResult<Customer>> DeleteCustomerAsync(int id)
